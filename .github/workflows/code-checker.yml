@@ -1,0 +1,40 @@
+name: webiner-BackEnd Code Checker
+
+on:
+  - pull_request
+  - push
+
+jobs:
+  webiner-p104:
+    name: webiner-p104 Check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['>=18.0.0 <=18.15.0']
+    steps:
+      - name: Checkout Code 📥
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Cache dependencies 🚀
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/yarn
+            ./node_modules
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ matrix.node-version }}-
+            ${{ runner.os }}-node-
+
+      - name: Setup Node.js ⚙️
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Project Dependencies ✅
+        run: yarn workspace:setup
+
+      - name: Run Tests 🧪
+        run: yarn test
