@@ -1,0 +1,2728 @@
+openapi: 3.0.0
+info:
+    version: 1.0.0
+    title: e-commerce api
+    description: ''
+    contact:
+        name: Elais Emon
+        email: 019eliashossain@gmail.com
+
+servers:
+    # Added by API Auto Mocking Plugin
+    - description: SwaggerHub API Auto Mocking
+      url: https://virtserver.swaggerhub.com/019ELIASHOSSAIN/E-commerce/1.0.0
+    - description: Dev
+      url: http://loaclhost:4000/api/v1
+
+tags:
+    - name: Auth
+      description: Authentication Endpoints (public)
+    - name: User
+      description: User Endpoints (public + private)
+    - name: Address
+      description: Address Endpoints (public + private)
+    - name: Category
+      description: Category Endpoints (public + private)
+    - name: Product
+      description: Product Endpoints (public + private)
+    - name: Product Variant
+      description: Product Variant Endpoints (public + private)
+    - name: Product Price Table
+      description: Product price Table Endpoints (public + private)
+    - name: Color
+      description: Color endpoints (public + private)
+    - name: Material
+      description: Material endpoints (public + private)
+    - name: Average Rating
+      description: Average Rating Endpoints (public)
+    - name: Review
+      description: Review Endpoints (public)
+    - name: Coupon
+      description: Coupon code Endpoints (public + private)
+    - name: special Discount
+      description: Special Discount Endpoints (public + private)
+    - name: Additional Charge
+      description: Additional Charges Endpoints (public + private)
+    - name: Order
+      description: Order Endpoints (public + private)
+    - name: Refund
+      description: Refund Endpoints (private)
+
+paths:
+    '/category':
+        get:
+            description: get all category
+            tags: [Category]
+            parameters:
+                - $ref: '#/components/parameters/pageParam'
+                - $ref: '#/components/parameters/limitParam'
+                - $ref: '#/components/parameters/sortTypeParam'
+                - $ref: '#/components/parameters/sortByParam'
+                - $ref: '#/components/parameters/searchParam'
+            responses:
+                '200':
+                    description: Return list of category
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/CategoryDTO'
+                                    pagination:
+                                        $ref: '#/components/schemas/pagination'
+                '400':
+                    $ref: '#/components/responses/400'
+                '500':
+                    '$ref': '#/components/responses/500'
+        post:
+            security:
+                - bearerAuth: []
+            operationId: creatCategory
+            tags: [Category]
+            description: Creat a category
+            requestBody:
+                description: To create a new Category user must need to provide valid data
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Category'
+                            required: [title]
+            responses:
+                '201':
+                    description: Successfully created a new Category
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/CategoryDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+    '/category/{id}':
+        put:
+            security:
+                - bearerAuth: []
+            tags: [Category]
+            description: Update a single Category properties
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            requestBody:
+                description: have to provide the property which have to update
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Category'
+            responses:
+                '200':
+                    description: Single Category Data Update
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/CategoryDTO'
+
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+        get:
+            tags: [Category]
+            description: Fetch a single category
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '200':
+                    description: Return a category
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/CategoryDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    '$ref': '#/components/responses/500'
+        delete:
+            security:
+                - bearerAuth: []
+            tags: [Category]
+            description: Delete an Category by id
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '204':
+                    $ref: '#/components/responses/204'
+                '401':
+                    $ref: '#/components/responses/401'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    $ref: '#/components/responses/500'
+
+    '/product':
+        get:
+            description: get all product
+            tags: [Product]
+            parameters:
+                - $ref: '#/components/parameters/pageParam'
+                - $ref: '#/components/parameters/limitParam'
+                - $ref: '#/components/parameters/sortTypeParam'
+                - $ref: '#/components/parameters/sortByParam'
+                - $ref: '#/components/parameters/searchParam'
+                - in: query
+                  name: CategotyId
+                  description: get all Product of the category Id
+                  schema:
+                      type: string
+                      example: '14d45fsdfsa'
+            responses:
+                '200':
+                    description: Return list of Product
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/ProductDTO'
+                                    pagination:
+                                        $ref: '#/components/schemas/pagination'
+                '400':
+                    $ref: '#/components/responses/400'
+                '500':
+                    '$ref': '#/components/responses/500'
+        post:
+            security:
+                - bearerAuth: []
+            tags: [Product]
+            description: Creat a Product
+            requestBody:
+                description: To create a new Product user must need to provide valid data
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Product'
+                            required: [title]
+            responses:
+                '201':
+                    description: Successfully created a new product
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/ProductDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+    '/product/{id}':
+        put:
+            security:
+                - bearerAuth: []
+            tags: [Product]
+            description: Update a single Product properties
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            requestBody:
+                description: have to provide the property which have to update
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Product'
+            responses:
+                '200':
+                    description: Single Product Data Update
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/ProductDTO'
+
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+        get:
+            tags: [Product]
+            description: Fetch a single Product
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '200':
+                    description: Return a single Product
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/ProductDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    '$ref': '#/components/responses/500'
+        delete:
+            security:
+                - bearerAuth: []
+            tags: [Product]
+            description: Delete an Product by id
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '204':
+                    $ref: '#/components/responses/204'
+                '401':
+                    $ref: '#/components/responses/401'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    $ref: '#/components/responses/500'
+
+    '/product_variant':
+        get:
+            description: get all Product Variant
+            tags: [Product Variant]
+            parameters:
+                - $ref: '#/components/parameters/pageParam'
+                - $ref: '#/components/parameters/limitParam'
+                - $ref: '#/components/parameters/sortTypeParam'
+                - $ref: '#/components/parameters/sortByParam'
+                - $ref: '#/components/parameters/searchParam'
+                - in: query
+                  name: productId
+                  description: get all varint of the product Id
+                  schema:
+                      type: string
+                      example: '2asdfsa'
+
+            responses:
+                '200':
+                    description: Return list of Product Variant
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/ProductVariantDTO'
+                                    pagination:
+                                        $ref: '#/components/schemas/pagination'
+                '400':
+                    $ref: '#/components/responses/400'
+                '500':
+                    '$ref': '#/components/responses/500'
+        post:
+            security:
+                - bearerAuth: []
+            tags: [Product Variant]
+            description: Creat a Product Variant
+            requestBody:
+                description: To create a new Product Variant user must need to provide valid data
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/ProductVariant'
+                            required: [title, productId]
+            responses:
+                '201':
+                    description: Successfully created a new product variant
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/ProductVariantDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+    '/product_variant/{id}':
+        put:
+            security:
+                - bearerAuth: []
+            tags: [Product Variant]
+            description: Update a single Product Variant properties
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            requestBody:
+                description: have to provide the property Variant which have to update
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/ProductVariant'
+            responses:
+                '200':
+                    description: Single Product Variant Data Update
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/ProductVariantDTO'
+
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+        get:
+            tags: [Product Variant]
+            description: Fetch a single Product Variant
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '200':
+                    description: Return a single Product Variant
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/ProductVariantDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    '$ref': '#/components/responses/500'
+        delete:
+            security:
+                - bearerAuth: []
+            tags: [Product Variant]
+            description: Delete an Product Variant by id
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '204':
+                    $ref: '#/components/responses/204'
+                '401':
+                    $ref: '#/components/responses/401'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    $ref: '#/components/responses/500'
+
+    '/product_price_table':
+        get:
+            description: get a single Product's all Price
+            tags: [Product Price Table]
+            parameters:
+                - $ref: '#/components/parameters/pageParam'
+                - $ref: '#/components/parameters/limitParam'
+                - $ref: '#/components/parameters/sortTypeParam'
+                - $ref: '#/components/parameters/sortByParam'
+                - in: query
+                  name: productId
+                  description: get all price of the single product Id
+                  schema:
+                      type: string
+                      example: '2asdfsa'
+
+            responses:
+                '200':
+                    description: Return list of a single Product price table (each product may have multiple price Tables)
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/ProductPriceTableDTO'
+                                    pagination:
+                                        $ref: '#/components/schemas/pagination'
+                '400':
+                    $ref: '#/components/responses/400'
+                '500':
+                    '$ref': '#/components/responses/500'
+        post:
+            security:
+                - bearerAuth: []
+            tags: [Product Price Table]
+            description: Creat a Product Price Table
+            requestBody:
+                description: To create a new Product Price Table user must need to provide valid data. (each product may have multiple price Tables)
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/ProductPriceTable'
+                            required: [title, productId]
+            responses:
+                '201':
+                    description: Successfully created a new product's Price Table
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/ProductPriceTableDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+    '/product_price_table/{id}':
+        put:
+            security:
+                - bearerAuth: []
+            tags: [Product Price Table]
+            description: Update a single Product Price Table Property
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            requestBody:
+                description: have to provide the property of the product price table which have to update
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/ProductPriceTable'
+            responses:
+                '200':
+                    description: Single Product price table Data Update
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/ProductPriceTableDTO'
+
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+        get:
+            tags: [Product Price Table]
+            description: Fetch a single Product Price Table
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '200':
+                    description: Return a single Product Price Table
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/ProductPriceTableDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    '$ref': '#/components/responses/500'
+        delete:
+            security:
+                - bearerAuth: []
+            tags: [Product Price Table]
+            description: Delete an Product Price Table by id
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '204':
+                    $ref: '#/components/responses/204'
+                '401':
+                    $ref: '#/components/responses/401'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    $ref: '#/components/responses/500'
+
+    '/coupons':
+        get:
+            description: get all Coupon
+            tags: [Coupon]
+            parameters:
+                - $ref: '#/components/parameters/pageParam'
+                - $ref: '#/components/parameters/limitParam'
+                - $ref: '#/components/parameters/sortTypeParam'
+                - $ref: '#/components/parameters/sortByParam'
+                - $ref: '#/components/parameters/searchParam'
+
+            responses:
+                '200':
+                    description: Return list of Coupons
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/CouponDTO'
+                                    pagination:
+                                        $ref: '#/components/schemas/pagination'
+                '400':
+                    $ref: '#/components/responses/400'
+                '500':
+                    '$ref': '#/components/responses/500'
+        post:
+            security:
+                - bearerAuth: []
+            tags: [Coupon]
+            description: Creat a Coupon
+            requestBody:
+                description: To create a new Coupon user must need to provide valid data
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Coupon'
+                            required: [title]
+            responses:
+                '201':
+                    description: Successfully created a new Coupon
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/CouponDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+    '/coupons/{id}':
+        put:
+            security:
+                - bearerAuth: []
+            tags: [Coupon]
+            description: Update a single Coupon properties
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            requestBody:
+                description: have to provide the property of Coupon which have to update
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Coupon'
+            responses:
+                '200':
+                    description: Single Coupon Data Update
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/CouponDTO'
+
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+        get:
+            tags: [Coupon]
+            description: Fetch a single Coupon
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '200':
+                    description: Return a single Coupon
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/CouponDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    '$ref': '#/components/responses/500'
+        delete:
+            security:
+                - bearerAuth: []
+            tags: [Coupon]
+            description: Delete an Coupon by id
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '204':
+                    $ref: '#/components/responses/204'
+                '401':
+                    $ref: '#/components/responses/401'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    $ref: '#/components/responses/500'
+
+    '/average_rating':
+        get:
+            description: get Average Rating by Product id
+            tags: [Average Rating]
+            parameters:
+                - in: query
+                  name: productID
+                  description: Provide the productId
+                  schema:
+                      type: string
+                      format: id
+                      example: 2adfsc
+
+            responses:
+                '200':
+                    description: Return list of Coupons
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    data:
+                                        $ref: '#/components/schemas/AverageRatingDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '500':
+                    '$ref': '#/components/responses/500'
+    '/average_rating/{id}':
+        get:
+            tags: [Average Rating]
+            description: Fetch a single Average rating by Id
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '200':
+                    description: Return a single Average Rating
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/AverageRatingDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    '$ref': '#/components/responses/500'
+
+    '/user':
+        get:
+            security:
+                - bearerAuth: []
+            description: get all user
+            tags: [User]
+            parameters:
+                - $ref: '#/components/parameters/pageParam'
+                - $ref: '#/components/parameters/limitParam'
+                - $ref: '#/components/parameters/sortTypeParam'
+                - $ref: '#/components/parameters/sortByParam'
+                - $ref: '#/components/parameters/searchParam'
+
+            responses:
+                '200':
+                    description: Return list of User
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/UserDTO'
+                                    pagination:
+                                        $ref: '#/components/schemas/pagination'
+                '400':
+                    $ref: '#/components/responses/400'
+                '500':
+                    '$ref': '#/components/responses/500'
+        post:
+            tags: [User]
+            description: Creat a User
+            requestBody:
+                description: To create a new Coupon user must need to provide valid data
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/User'
+                                - type: object
+                                  properties:
+                                      password:
+                                          type: string
+                                          example: '%&^@HHIW123'
+                            required: [fullName]
+            responses:
+                '201':
+                    description: Successfully created a new user
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/UserDTO'
+                                    authentication:
+                                        type: object
+                                        properties:
+                                            token:
+                                                type: string
+                                                example: 'Bear aweqr43242314'
+                                            Refresstoken:
+                                                type: string
+                                                example: 'Bear werq2sadfadsfaw'
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+    '/user/{id}':
+        put:
+            tags: [User]
+            security:
+                - bearerAuth: []
+            description: Update a single User properties
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            requestBody:
+                description: have to provide the property of User which have to update
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Coupon'
+            responses:
+                '200':
+                    description: Single User Data Update
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/UserDTO'
+
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+        get:
+            tags: [User]
+            security:
+                - bearerAuth: []
+            description: Fetch a single User
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '200':
+                    description: Return a single User
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/UserDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    '$ref': '#/components/responses/500'
+        delete:
+            tags: [User]
+            security:
+                - bearerAuth: []
+            description: Delete an User by id
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '204':
+                    $ref: '#/components/responses/204'
+                '401':
+                    $ref: '#/components/responses/401'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    $ref: '#/components/responses/500'
+
+    '/address':
+        get:
+            security:
+                - bearerAuth: []
+            description: get all Address
+            tags: [Address]
+            parameters:
+                - $ref: '#/components/parameters/pageParam'
+                - $ref: '#/components/parameters/limitParam'
+                - $ref: '#/components/parameters/sortTypeParam'
+                - $ref: '#/components/parameters/sortByParam'
+                - $ref: '#/components/parameters/searchParam'
+
+            responses:
+                '200':
+                    description: Return list of Address
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/AddressDTO'
+                                    pagination:
+                                        $ref: '#/components/schemas/pagination'
+                '400':
+                    $ref: '#/components/responses/400'
+                '500':
+                    '$ref': '#/components/responses/500'
+        post:
+            security:
+                - bearerAuth: []
+            tags: [Address]
+            description: Creat a Address
+            requestBody:
+                description: To create a new Address user must need to provide valid data
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Coupon'
+                            required: [userId]
+            responses:
+                '201':
+                    description: Successfully created a new Address
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/AddressDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+    '/address/{id}':
+        put:
+            security:
+                - bearerAuth: []
+            tags: [Address]
+            description: Update a single Address properties
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            requestBody:
+                description: have to provide the property of Address which have to update
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Address'
+            responses:
+                '200':
+                    description: Single Address Data Update
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/AddressDTO'
+
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+        get:
+            security:
+                - bearerAuth: []
+            tags: [Address]
+            description: Fetch a single Address
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '200':
+                    description: Return a single Address
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/AddressDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    '$ref': '#/components/responses/500'
+        delete:
+            security:
+                - bearerAuth: []
+            tags: [Address]
+            description: Delete an Address by id
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '204':
+                    $ref: '#/components/responses/204'
+                '401':
+                    $ref: '#/components/responses/401'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    $ref: '#/components/responses/500'
+
+    '/review':
+        get:
+            description: get all Review
+            tags: [Review]
+            parameters:
+                - $ref: '#/components/parameters/pageParam'
+                - $ref: '#/components/parameters/limitParam'
+                - $ref: '#/components/parameters/sortTypeParam'
+                - $ref: '#/components/parameters/sortByParam'
+                - $ref: '#/components/parameters/searchParam'
+                - in: query
+                  name: productId
+                  description: get all varint of the product Id
+                  schema:
+                      type: string
+                      example: '2asdfsa'
+
+            responses:
+                '200':
+                    description: Return list of Review
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/ReviewDTO'
+                                    pagination:
+                                        $ref: '#/components/schemas/pagination'
+                '400':
+                    $ref: '#/components/responses/400'
+                '500':
+                    '$ref': '#/components/responses/500'
+        post:
+            tags: [Review]
+            description: Creat a Review
+            requestBody:
+                description: To create a new Review user must need to provide valid data
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Review'
+                            required: [title, productId]
+            responses:
+                '201':
+                    description: Successfully created a new Review
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/ReviewDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+    '/review/{id}':
+        put:
+            security:
+                - bearerAuth: []
+            tags: [Review]
+            description: Update a single Review properties
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            requestBody:
+                description: have to provide the property Review which have to update
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Review'
+            responses:
+                '200':
+                    description: Single Review Data Update
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/ReviewDTO'
+
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+        get:
+            tags: [Review]
+            description: Fetch a single Review
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '200':
+                    description: Return a single Review
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/ReviewDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    '$ref': '#/components/responses/500'
+        delete:
+            security:
+                - bearerAuth: []
+            tags: [Review]
+            description: Delete an Review by id
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '204':
+                    $ref: '#/components/responses/204'
+                '401':
+                    $ref: '#/components/responses/401'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    $ref: '#/components/responses/500'
+
+    '/additional_charge':
+        get:
+            description: get all additional_charge
+            tags: [Additional Charge]
+
+            responses:
+                '200':
+                    description: Return list of additional charge
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/AdditionalChargeDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '500':
+                    '$ref': '#/components/responses/500'
+        post:
+            security:
+                - bearerAuth: []
+            tags: [Additional Charge]
+            description: Creat a Additional Charge
+            requestBody:
+                description: To create a new Additinal charge user must need to provide valid data
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/AdditionalCharge'
+            responses:
+                '201':
+                    description: Successfully created a new AdditionalCharge
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/AdditionalChargeDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+    '/additional_charge/{id}':
+        put:
+            security:
+                - bearerAuth: []
+            tags: [Additional Charge]
+            description: Update a single Additinal Charge properties
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            requestBody:
+                description: have to provide the property of Additional Charge which have to update
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/AdditionalCharge'
+            responses:
+                '200':
+                    description: Single Additional Charge Data Update
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/AdditionalChargeDTO'
+
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+        get:
+            tags: [Additional Charge]
+            description: Fetch a single Additional Charge
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '200':
+                    description: Return a single Additional Charge
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/AdditionalChargeDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    '$ref': '#/components/responses/500'
+        delete:
+            security:
+                - bearerAuth: []
+            tags: [Additional Charge]
+            description: Delete an Additional Charge by id
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '204':
+                    $ref: '#/components/responses/204'
+                '401':
+                    $ref: '#/components/responses/401'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    $ref: '#/components/responses/500'
+
+    '/refunds':
+        get:
+            security:
+                - bearerAuth: []
+            description: get all Refunds
+            tags: [Refund]
+            parameters:
+                - $ref: '#/components/parameters/pageParam'
+                - $ref: '#/components/parameters/limitParam'
+                - $ref: '#/components/parameters/sortTypeParam'
+                - $ref: '#/components/parameters/sortByParam'
+                - $ref: '#/components/parameters/searchParam'
+            responses:
+                '200':
+                    description: Return list of Refunds
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/RefundDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '500':
+                    '$ref': '#/components/responses/500'
+        post:
+            security:
+                - bearerAuth: []
+            tags: [Refund]
+            description: Creat a Refund entry
+            requestBody:
+                description: To create a new Refund entry user must need to provide valid data
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Refund'
+            responses:
+                '201':
+                    description: Successfully created a new Refund Entry
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/RefundDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+    '/refunds/{id}':
+        put:
+            security:
+                - bearerAuth: []
+            tags: [Refund]
+            description: Update a single Refund properties
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            requestBody:
+                description: have to provide the property of Refund entry which have to update
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Refund'
+            responses:
+                '200':
+                    description: Single Refund entry Data Update
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/RefundDTO'
+
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+        get:
+            security:
+                - bearerAuth: []
+            tags: [Refund]
+            description: Fetch a single Refund
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '200':
+                    description: Return a single Refund
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/RefundDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    '$ref': '#/components/responses/500'
+
+    '/special_discount':
+        get:
+            description: get all special Discount
+            tags: [special Discount]
+            parameters:
+                - $ref: '#/components/parameters/pageParam'
+                - $ref: '#/components/parameters/limitParam'
+                - $ref: '#/components/parameters/sortTypeParam'
+                - $ref: '#/components/parameters/sortByParam'
+                - $ref: '#/components/parameters/searchParam'
+
+            responses:
+                '200':
+                    description: Return list of special Discount
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/SpecialDiscountDTO'
+                                    pagination:
+                                        $ref: '#/components/schemas/pagination'
+                '400':
+                    $ref: '#/components/responses/400'
+                '500':
+                    '$ref': '#/components/responses/500'
+        post:
+            security:
+                - bearerAuth: []
+            tags: [special Discount]
+            description: Creat a Special Discount
+            requestBody:
+                description: To create a new Special Discount user must need to provide valid data
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/SpecialDiscount'
+                            required: [title]
+            responses:
+                '201':
+                    description: Successfully created a new SpecialDiscount
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/SpecialDiscountDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+    '/special_disount/{id}':
+        put:
+            security:
+                - bearerAuth: []
+            tags: [special Discount]
+            description: Update a single Special Discount properties
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            requestBody:
+                description: have to provide the property of Special Discountwhich have to update
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/SpecialDiscount'
+            responses:
+                '200':
+                    description: Single Special Discount Data Update
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/SpecialDiscountDTO'
+
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+        get:
+            tags: [special Discount]
+            description: Fetch a single Special Discount
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '200':
+                    description: Return a single Special Discount
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/SpecialDiscountDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    '$ref': '#/components/responses/500'
+        delete:
+            security:
+                - bearerAuth: []
+            tags: [special Discount]
+            description: Delete an Special Discount by id
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '204':
+                    $ref: '#/components/responses/204'
+                '401':
+                    $ref: '#/components/responses/401'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    $ref: '#/components/responses/500'
+
+    '/color':
+        get:
+            description: get All color
+            tags: [Color]
+            parameters:
+                - $ref: '#/components/parameters/pageParam'
+                - $ref: '#/components/parameters/limitParam'
+                - $ref: '#/components/parameters/sortTypeParam'
+                - $ref: '#/components/parameters/sortByParam'
+
+            responses:
+                '200':
+                    description: Return list of color
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/ColorDTO'
+                                    pagination:
+                                        $ref: '#/components/schemas/pagination'
+                '400':
+                    $ref: '#/components/responses/400'
+                '500':
+                    '$ref': '#/components/responses/500'
+        post:
+            security:
+                - bearerAuth: []
+            tags: [Color]
+            description: Creat a color
+            requestBody:
+                description: To create a new  Color user must need to provide valid data.
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Material'
+                            required: [title]
+            responses:
+                '201':
+                    description: Successfully created a new color
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/ColorDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+    '/color/{id}':
+        put:
+            security:
+                - bearerAuth: []
+            tags: [Color]
+            description: Update a single color Property
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            requestBody:
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Color'
+            responses:
+                '200':
+                    description: updated color property
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/ColorDTO'
+
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+        get:
+            tags: [Color]
+            description: Fetch a single color
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '200':
+                    description: Return a single color
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/ColorDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    '$ref': '#/components/responses/500'
+        delete:
+            security:
+                - bearerAuth: []
+            tags: [Color]
+            description: Delete a Color
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '204':
+                    $ref: '#/components/responses/204'
+                '401':
+                    $ref: '#/components/responses/401'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    $ref: '#/components/responses/500'
+
+    '/material':
+        get:
+            description: get All material
+            tags: [Material]
+            parameters:
+                - $ref: '#/components/parameters/pageParam'
+                - $ref: '#/components/parameters/limitParam'
+                - $ref: '#/components/parameters/sortTypeParam'
+                - $ref: '#/components/parameters/sortByParam'
+
+            responses:
+                '200':
+                    description: Return list of material
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/MaterialDTO'
+                                    pagination:
+                                        $ref: '#/components/schemas/pagination'
+                '400':
+                    $ref: '#/components/responses/400'
+                '500':
+                    '$ref': '#/components/responses/500'
+        post:
+            security:
+                - bearerAuth: []
+            tags: [Material]
+            description: Creat a Material
+            requestBody:
+                description: To create a new  Material user must need to provide valid data.
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Material'
+                            required: [title]
+            responses:
+                '201':
+                    description: Successfully created a new Material
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/MaterialDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+    '/material/{id}':
+        put:
+            security:
+                - bearerAuth: []
+            tags: [Material]
+            description: Update a single Material Property
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            requestBody:
+                content:
+                    'application/json':
+                        schema:
+                            allOf:
+                                - $ref: '#/components/schemas/Material'
+            responses:
+                '200':
+                    description: updated Material property
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/MaterialDTO'
+
+                '400':
+                    $ref: '#/components/responses/400'
+                '401':
+                    $ref: '#/components/responses/401'
+                '500':
+                    $ref: '#/components/responses/500'
+        get:
+            tags: [Material]
+            description: Fetch a single Material
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '200':
+                    description: Return a single Material
+                    content:
+                        'application/json':
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        $ref: '#/components/schemas/message'
+                                    code:
+                                        $ref: '#/components/schemas/code'
+                                    data:
+                                        $ref: '#/components/schemas/MaterialDTO'
+                '400':
+                    $ref: '#/components/responses/400'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    '$ref': '#/components/responses/500'
+        delete:
+            security:
+                - bearerAuth: []
+            tags: [Material]
+            description: Material a Color
+            parameters:
+                - $ref: '#/components/parameters/idPathParam'
+            responses:
+                '204':
+                    $ref: '#/components/responses/204'
+                '401':
+                    $ref: '#/components/responses/401'
+                '404':
+                    $ref: '#/components/responses/404'
+                '500':
+                    $ref: '#/components/responses/500'
+
+components:
+    securitySchemes:
+        bearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+
+    responses:
+        '204':
+            description: 'Item delete successfully'
+            content:
+                'application/json':
+                    schema:
+                        type: object
+                        properties:
+                            code:
+                                $ref: '#/components/schemas/code'
+                            message:
+                                $ref: '#/components/schemas/message'
+
+        '500':
+            description: 'Internal Server Error'
+            content:
+                'application/json':
+                    schema:
+                        type: object
+                        properties:
+                            code:
+                                type: integer
+                                format: int32
+                                example: 500
+                            error:
+                                type: string
+                                example: Internal Server Error
+                            message:
+                                type: string
+                                example: We are sorry for the inconvenience. Please try again later
+        '400':
+            description: 'Bad Request'
+            content:
+                'application/json':
+                    schema:
+                        type: object
+                        properties:
+                            code:
+                                type: integer
+                                format: int32
+                                example: 400
+                            error:
+                                type: string
+                                example: Bad Request
+                            data:
+                                type: array
+                                items:
+                                    type: object
+                                    properties:
+                                        field:
+                                            type: string
+                                            example: email
+                                        message:
+                                            type: string
+                                            example: Invalid email
+                                        in:
+                                            type: string
+                                            enum: [query, body]
+                                            example: body
+        '401':
+            description: Unauthorized
+            content:
+                'application/json':
+                    schema:
+                        type: object
+                        properties:
+                            code:
+                                type: integer
+                                format: int32
+                                example: 401
+                            error:
+                                type: string
+                                example: Unauthorized
+                            message:
+                                type: string
+                                example: You don't have the right permissions
+        '404':
+            description: Resource Not Found
+            content:
+                'application/json':
+                    schema:
+                        type: object
+                        properties:
+                            code:
+                                type: integer
+                                format: int32
+                                example: 404
+                            error:
+                                type: string
+                                example: Not Found
+                            message:
+                                type: string
+                                example: Requested resource not found
+    schemas:
+        Order:
+            allOf:
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 1
+                      productId:
+                          type: string
+                          example: '12asfsaf'
+                      totalRating:
+                          type: number
+                          format: float
+                          example: 120.5
+                      totalRatingSubmition:
+                          type: integer
+                          format: int32
+                          example: 30
+                - $ref: '#/components/schemas/Timestamp'
+
+        AverageRatingDTO:
+            allOf:
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 1
+                      productId:
+                          type: string
+                          example: '12asfsaf'
+                      totalRating:
+                          type: number
+                          format: float
+                          example: 120.5
+                      totalRatingSubmition:
+                          type: integer
+                          format: int32
+                          example: 30
+                - $ref: '#/components/schemas/Timestamp'
+
+        SpecialDiscount:
+            allOf:
+                - type: object
+                  properties:
+                      productId:
+                          type: string
+                          example: '1234dsfasd'
+                      title:
+                          type: string
+                          example: Exclusive Offter
+                      discountType:
+                          description: This property mention that is the coupon value in percentage disount or normal currency discount.
+                          type: string
+                          enum: ['%', '$']
+                          example: '$'
+                      value:
+                          type: number
+                          format: float
+                          example: 3.4
+                      validity:
+                          type: string
+                          format: date&time
+                          example: 2023-08-16T00:10:18+0000
+        SpecialDiscountDTO:
+            allOf:
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 1
+                - $ref: '#/components/schemas/Timestamp'
+                - $ref: '#/components/schemas/SpecialDiscount'
+
+        Color:
+            allOf:
+                - type: object
+                  properties:
+                      title:
+                          type: string
+                          example: 'Red'
+                      colorCode:
+                          type: string
+                          example: '#ddddd'
+        ColorDTO:
+            allOf:
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 1
+                - $ref: '#/components/schemas/Timestamp'
+                - $ref: '#/components/schemas/Color'
+
+        Material:
+            allOf:
+                - type: object
+                  properties:
+                      title:
+                          type: string
+                          example: 'Red'
+        MaterialDTO:
+            allOf:
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 1
+                - $ref: '#/components/schemas/Timestamp'
+                - $ref: '#/components/schemas/Material'
+
+        Refund:
+            allOf:
+                - type: object
+                  properties:
+                      orderId:
+                          type: string
+                          format: id
+                          example: '12333sdfsda'
+                      userId:
+                          type: string
+                          format: id
+                          example: 'asf1313'
+                      customerName:
+                          type: string
+                          example: Mr wang
+                      reason:
+                          type: string
+                          example: 'Fault of Product'
+                      comments:
+                          type: string
+                          example: 'Fault of Product'
+                      ammount:
+                          type: number
+                          format: float
+                          example: 23.45
+        RefundDTO:
+            allOf:
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 1
+                      status:
+                          type: string
+                          enum: ['approve', 'cancel', 'complete']
+                          example: approve
+                - $ref: '#/components/schemas/Timestamp'
+                - $ref: '#/components/schemas/Category'
+
+        AdditionalCharge:
+            allOf:
+                - type: object
+                  properties:
+                      title:
+                          type: string
+                          example: Setup Charge
+                      chargeType:
+                          type: string
+                          enum: ['%', '$']
+                          example: $
+                      chargeValue:
+                          type: number
+                          format: float
+                          example: 23.5
+                      status:
+                          type: string
+                          enum: ['active', 'inactive']
+                          example: active
+        AdditionalChargeDTO:
+            allOf:
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 1
+                - $ref: '#/components/schemas/Timestamp'
+                - $ref: '#/components/schemas/Category'
+
+        Category:
+            allOf:
+                - type: object
+                  properties:
+                      title:
+                          type: string
+                          example: Mug
+                      image:
+                          $ref: '#/components/schemas/image'
+                      status:
+                          $ref: '#/components/schemas/status'
+        CategoryDTO:
+            allOf:
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 1
+                - $ref: '#/components/schemas/Timestamp'
+                - $ref: '#/components/schemas/Category'
+
+        Product:
+            allOf:
+                - type: object
+                  properties:
+                      title:
+                          type: string
+                          example: Drinks Mug
+                      categoryId:
+                          type: string
+                          example: '1'
+                      categoryName:
+                          type: string
+                          example: 'Mugs'
+                      shortDetails:
+                          type: string
+                          example: this is rich text
+                      fullDetails:
+                          type: string
+                          example: this is rich text
+                      productSpecs:
+                          type: object
+                          properties:
+                              material:
+                                  type: string
+                                  example: carbon fiver
+                              capacity:
+                                  type: string
+                                  example: 10 oz.
+                      sku:
+                          type: string
+                          example: 103MU10OZ
+                      unitLowestprice:
+                          type: number
+                          format: float
+                          example: 0.71
+                      height:
+                          description: must be provided into pixel
+                          type: number
+                          format: float
+                          example: 340
+                      width:
+                          description: must be provided into pixel
+                          type: number
+                          format: float
+                          example: 240
+                      imprintedAreaHeight:
+                          description: must be provided into pixel
+                          type: number
+                          format: float
+                          example: 140
+                      imprintedAreaWidth:
+                          description: must be provided into pixel
+                          type: number
+                          format: float
+                          example: 80
+                      imprintedAreaPositionX:
+                          description: must be provided into pixel
+                          type: number
+                          format: float
+                          example: 70
+                      imprintedAreaPositionY:
+                          description: must be provided into pixel
+                          type: number
+                          format: float
+                          example: 70
+                      media:
+                          type: array
+                          items:
+                              type: object
+                              properties:
+                                  MediaDetails:
+                                      $ref: '#/components/schemas/image'
+                                  type:
+                                      type: string
+                                      enum: ['image', 'video']
+                                      example: image
+                      averageRatingId:
+                          type: string
+                          example: '13z'
+                      status:
+                          $ref: '#/components/schemas/status'
+        ProductDTO:
+            allOf:
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 1
+                - $ref: '#/components/schemas/Timestamp'
+                - $ref: '#/components/schemas/Product'
+
+        ProductVariant:
+            allOf:
+                - type: object
+                  properties:
+                      productId:
+                          type: string
+                          example: '1234dsfasd'
+                      title:
+                          type: string
+                          example: Red
+                      image:
+                          $ref: '#/components/schemas/image'
+                      colorId:
+                          type: string
+                          example: '1343asdasf'
+        ProductVariantDTO:
+            allOf:
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 1
+                - $ref: '#/components/schemas/Timestamp'
+                - $ref: '#/components/schemas/ProductVariant'
+
+        ProductPriceTable:
+            allOf:
+                - type: object
+                  properties:
+                      title:
+                          type: string
+                          example: full color
+                      productId:
+                          type: string
+                          example: '12313'
+                      eachPriceWithRange:
+                          type: array
+                          items:
+                              type: object
+                              properties:
+                                  unitNumber:
+                                      type: integer
+                                      format: int32
+                                      example: 50
+                                  unitPrice:
+                                      type: number
+                                      format: float
+                                      example: 1.3
+                      minUnitsToOrder:
+                          type: integer
+                          format: int32
+                          example: 12
+                      unitAdditionalPrintPrice:
+                          type: number
+                          format: float
+                          example: .56
+        ProductPriceTableDTO:
+            allOf:
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 1
+                - $ref: '#/components/schemas/Timestamp'
+                - $ref: '#/components/schemas/ProductPriceTable'
+
+        Coupon:
+            allOf:
+                - type: object
+                  properties:
+                      title:
+                          type: string
+                          example: Red
+                      discountType:
+                          description: This property mention that is the coupon value in percentage disount or normal currency discount.
+                          type: string
+                          enum: ['%', '$']
+                          example: '$'
+                      isUserIndividual:
+                          description: this property mention that is it for specific user
+                          type: boolean
+                          example: false
+                      userId:
+                          type: string
+                          example: 'userid234324sdafasdf'
+
+                      isProductsIndividual:
+                          description: this property mention that is it for specific product
+                          type: boolean
+                          example: false
+                      productIds:
+                          type: array
+                          items:
+                              type: string
+                              example: 'userid234324sdafasdf'
+                      value:
+                          type: number
+                          format: float
+                          example: 3.4
+                      validity:
+                          type: string
+                          format: date&time
+                          example: 2023-08-16T00:10:18+0000
+        CouponDTO:
+            allOf:
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 1
+                - $ref: '#/components/schemas/Timestamp'
+                - $ref: '#/components/schemas/Coupon'
+
+        User:
+            allOf:
+                - type: object
+                  properties:
+                      fullName:
+                          type: string
+                          example: 'MR Wang'
+                      email:
+                          type: string
+                          format: email
+                          example: 'mrwang@gmail.com'
+                      phoneNumber:
+                          type: string
+                          format: phone
+                          example: '+88990881231'
+                      billingAddressId:
+                          type: string
+                          format: id
+                          example: 'dsfag12313'
+                      shippingAddressId:
+                          type: string
+                          format: id
+                          example: 'dsfag12313'
+                      role:
+                          type: string
+                          enum: ['admin', 'user']
+                          example: user
+        UserDTO:
+            allOf:
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 1
+                - $ref: '#/components/schemas/Timestamp'
+                - $ref: '#/components/schemas/Address'
+
+        Address:
+            allOf:
+                - type: object
+                  properties:
+                      userId:
+                          type: string
+                          example: 'asdfsa323'
+                      addressType:
+                          type: string
+                          enum: ['shipping', 'billing']
+                          example: shipping
+                      address1:
+                          type: string
+                          example: north america, street wc - d8
+                      address2:
+                          type: string
+                          example: north america, street wc - d8
+                      city:
+                          type: string
+                          example: wc dc
+                      zip:
+                          type: integer
+                          format: int32
+                          example: 12256
+                      country:
+                          type: string
+                          example: 'USA'
+                      state:
+                          type: string
+                          example: 'washinton DC'
+                      phone:
+                          type: string
+                          format: phone
+                          example: '+2390312131'
+                      email:
+                          type: string
+                          format: email
+                          example: 'merwang@gmail.com'
+        AddressDTO:
+            allOf:
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 1
+                - $ref: '#/components/schemas/Timestamp'
+                - $ref: '#/components/schemas/Address'
+
+        Review:
+            allOf:
+                - type: object
+                  properties:
+                      productId:
+                          type: string
+                          example: '1234dsfasd'
+                      userId:
+                          type: string
+                          example: '1234dsfasd'
+                      title:
+                          type: string
+                          example: 'This is Title'
+                      reviewerName:
+                          type: string
+                          example: 'Mr Wang'
+                      email:
+                          type: string
+                          format: email
+                          example: 'mrwang@gmail.com'
+                      rating:
+                          type: number
+                          format: float
+                          example: 4.7
+                      comment:
+                          type: string
+                          example: 'This Product Is oassam'
+        ReviewDTO:
+            allOf:
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 1
+                - $ref: '#/components/schemas/Timestamp'
+                - $ref: '#/components/schemas/Review'
+
+        code:
+            type: integer
+            format: int32
+            example: 201
+        message:
+            type: string
+            example: fetch/update/create/delete succesfully
+        Timestamp:
+            type: object
+            properties:
+                createdAt:
+                    type: string
+                    format: datetime
+                updatedAt:
+                    type: string
+                    format: datetime
+        status:
+            type: string
+            enum: [draft, published]
+            example: draft
+
+        image:
+            type: object
+            properties:
+                link:
+                    type: string
+                    format: url
+                    example: http://s3.aws.example.com
+                alt:
+                    type: string
+                    example: 'The mugs in discount'
+                id:
+                    type: string
+                    example: '12adtsdsf1232cff'
+        pagination:
+            type: object
+            properties:
+                page:
+                    type: integer
+                    format: int32
+                    example: 3
+                limit:
+                    type: integer
+                    format: int32
+                    example: 10
+                next:
+                    type: integer
+                    format: int32
+                    example: 4
+                prv:
+                    type: integer
+                    format: int32
+                    example: 2
+                totalPage:
+                    type: integer
+                    format: int32
+                    example: 8
+                totalItems:
+                    type: integer
+                    format: int32
+                    example: 80
+    parameters:
+        pageParam:
+            in: query
+            name: page
+            description: current page number
+            schema:
+                type: integer
+                format: int32
+                example: 2
+        limitParam:
+            in: query
+            name: limit
+            description: maximum items to be returned
+            schema:
+                type: integer
+                format: int32
+                example: 10
+        sortTypeParam:
+            in: query
+            name: sort_type
+            description: type of sort (asc or dsc)
+            schema:
+                type: string
+                enum: [asc, dsc]
+                example: dsc
+        sortByParam:
+            in: query
+            name: sort_by
+            description: Sort key
+            schema:
+                type: string
+                example: updatedAt
+        searchParam:
+            in: query
+            name: search
+            description: Search term
+            schema:
+                type: string
+                example: title
+        idPathParam:
+            in: path
+            name: id
+            required: true
+            description: item id
+            schema:
+                type: string
+                example: 1
